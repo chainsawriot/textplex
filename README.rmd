@@ -26,8 +26,9 @@ You can install the experimental version of textplex from github:
 devtools::install_github("chainsawriot/textplex")
 ```
 
-## Example
+## Examples
 
+Calculating raw scores for English content.
 
 ```{r}
 library(udpipe)
