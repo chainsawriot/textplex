@@ -69,7 +69,7 @@ de_input_text <- c("Entschuldigung. Ich kann mit Ihnen auf Deutsch nicht
  noch ganz gut. In mir drin ist alles rot und du bist ein Idiot, mein Freund.
  Du verschmähst mein süßes Blut.")
 
-calculate_textplex(input_text, de_udpipe_model)
+calculate_textplex(de_input_text, de_udpipe_model)
 ```
 
 Fit the two-factor model.

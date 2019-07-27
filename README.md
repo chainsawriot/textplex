@@ -91,15 +91,15 @@ de_input_text <- c("Entschuldigung. Ich kann mit Ihnen auf Deutsch nicht
  noch ganz gut. In mir drin ist alles rot und du bist ein Idiot, mein Freund.
  Du verschmähst mein süßes Blut.")
 
-calculate_textplex(input_text, de_udpipe_model)
+calculate_textplex(de_input_text, de_udpipe_model)
 ```
 
     ##   document       TTR        K      ARI            I avg_sl  entropy
-    ## 1    text1 0.6750000 253.1250 12.53574 3.950617e-07  20.25 5.677584
-    ## 2    text2 0.6567164 461.1272 18.51851 2.168599e-07  33.50 5.055991
+    ## 1    text1 0.8571429 484.6939 7.638571 2.063158e-07      7 4.574054
+    ## 2    text2 0.7500000 432.0988 1.779167 2.314286e-07      9 4.707677
     ##       mtld syntactic_depth syntactic_dependency
-    ## 1 59.57308            1.75                  5.0
-    ## 2 34.64706            4.00                  6.5
+    ## 1 42.59111            1.75                 3.50
+    ## 2 44.90182            2.25                 3.75
 
 Fit the two-factor
 model.
