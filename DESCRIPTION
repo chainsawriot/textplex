@@ -1,0 +1,26 @@
+Package: textplex
+Title: Calculate Text Complexity
+Version: 0.0.0.1
+Authors@R: 
+    person(given = "Chung-hong",
+           family = "Chan",
+           role = c("aut", "cre"),
+           email = "chainsawtiney@gmail.com",
+           comment = c(ORCID = "0000-0002-6232-7530"))
+Description: Calculate text complexity using the algorithm by Tolochko & Boomgaarden (2019).
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    purrr,
+    udpipe,
+    tokenizers,
+    quanteda,
+    dplyr,
+    stringr,
+    igraph,
+    tibble,
+    magrittr,
+    psych,
+    GPArotation
+RoxygenNote: 6.1.1
