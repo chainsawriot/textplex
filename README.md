@@ -5,9 +5,9 @@
 
 <!-- badges: end -->
 
-The goal of textplex is to calculate text complexity using the algorithm
-by Tolochko & Boomgaarden (2019). Further validation of the algorithm is
-available in Tolochko, Song & Boomgaarden (2019).
+The goal of textplex is to calculate textual complexity using the
+algorithm by Tolochko & Boomgaarden (2019). Further validation of the
+algorithm is available in Tolochko, Song & Boomgaarden (2019).
 
 **Caveats:**
 
@@ -16,7 +16,7 @@ available in Tolochko, Song & Boomgaarden (2019).
     [spacyr](https://github.com/quanteda/spacyr) (Benoit et al.) to
     maintain compatibility with the original implementation.
 2.  Super slow, but premature optimization is the root of all evil.
-3.  For algorithm by Benoit, Munger & Spirling (2019), use
+3.  For the algorithm by Benoit, Munger & Spirling (2019), use
     [sophistication](https://github.com/kbenoit/sophistication).
 
 References:
