@@ -13,10 +13,8 @@ First fifty fairy tales from hcandersenr::hcandersen_en.
 }
 \examples{
 \dontrun{
-require(udpipe)
 data(fairy)
-udpipe_model <- udpipe_load_model('english-ewt-ud-2.4-190531.udpipe')
-fairy_rawscore <- calculate_textplex(fairy$text, udpipe_model)
+fairy_rawscore <- calculate_textplex(fairy$text)
 }
 }
 \keyword{datasets}

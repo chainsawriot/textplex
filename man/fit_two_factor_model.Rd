@@ -4,10 +4,12 @@
 \alias{fit_two_factor_model}
 \title{Fit a two-factor model as per Tolochko and Boomgaarden}
 \usage{
-fit_two_factor_model(raw_scores)
+fit_two_factor_model(raw_scores, rotate = "oblimin")
 }
 \arguments{
 \item{raw_scores}{raw_scores extracted by calculate_textplex()}
+
+\item{rotate}{which rotation to use. The original implementation uses "oblimin". Please consult ?psych::fa for other options.}
 }
 \value{
 a psych::principal fit.

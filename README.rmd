@@ -7,8 +7,8 @@ The goal of textplex is to calculate textual complexity using the algorithm by T
 
 **Caveats:**
 
-1. The current version uses udpipe to create dependency trees. Future version will provide an option to use [spacyr](https://github.com/quanteda/spacyr) (Benoit et al.) to maintain compatibility with the original implementation.
-2. Super slow, but premature optimization is the root of all evil.
+1. The current version uses [spacyr](https://github.com/quanteda/spacyr) (Benoit et al.) to maintain compatibility with the original implementation (unlike the initial implement, which used udpipe). Future versions will add back the option to use udpipe.
+2. Super slow (although has been improved), but premature optimization is the root of all evil.
 3. For the algorithm by Benoit, Munger & Spirling (2019), use [sophistication](https://github.com/kbenoit/sophistication).
 
 References:
@@ -26,18 +26,23 @@ You can install the experimental version of textplex from github:
 devtools::install_github("chainsawriot/textplex")
 ```
 
+Please also install and setup an spacyr environment, as per the instructions from the [spacyr webpage](http://spacyr.quanteda.io/). In essence, it means:
+
+```{r eval=FALSE}
+install.packages('spacyr')
+library(spacyr)
+spacy_insatll()
+```
+
 ## Examples
 
 Calculating raw scores for English content.
 
 ```{r}
-library(udpipe)
 library(textplex)
-## Download the english language model
-## udpipe_download_model(language = "english")
-
+library(spacyr)
 ## Load the english language model
-udpipe_model <- udpipe_load_model("english-ewt-ud-2.4-190531.udpipe")
+spacy_initialize(model = 'en')
 
 input_text <- c("A spectre is haunting Europe - the spectre of Communism.
 All the powers of old Europe have entered into a holy alliance to exorcise
@@ -53,14 +58,17 @@ and German police-spies. Where is the party in opposition that has not been
  society, will be more easily understood by considering in what manner it
  operates in some particular manufactures.")
 
-calculate_textplex(input_text, udpipe_model)
+calculate_textplex(input_text)
 ```
 
 Aber sprichst du Deutsch?
 
 ```{r}
-## udpipe_download_model(language = "german")
-de_udpipe_model <- udpipe_load_model("german-gsd-ud-2.4-190531.udpipe")
+spacy_finalize()
+
+## spacy_download_langmodel("de")
+
+spacy_initialize(model = 'de')
 
 de_input_text <- c("Entschuldigung. Ich kann mit Ihnen auf Deutsch nicht
  sprechen, weil mein Deutsch sehr schlecht ist. Man sagt 'deutsche Sprache,
@@ -69,29 +77,40 @@ de_input_text <- c("Entschuldigung. Ich kann mit Ihnen auf Deutsch nicht
  noch ganz gut. In mir drin ist alles rot und du bist ein Idiot, mein Freund.
  Du verschmähst mein süßes Blut.")
 
-calculate_textplex(de_input_text, de_udpipe_model)
+calculate_textplex(de_input_text)
 ```
 
 Fit the two-factor model.
 
 ```{r}
-### it takes a long time. But you need to have a reasonable amount of data to fit the two-factor model.
-
-library(dplyr)
+library(furrr)
 library(psych)
+library(sotu)
+library(dplyr)
 
-## library(hcandersenr)
-## hcandersen_en %>% group_by(book) %>% summarise(text = paste(text, collapse = " ")) %>% head(50) -> fairy
+spacy_finalize()
 
-data(fairy)
+spacy_initialize(model = 'en')
 
-fairy_rawscore <- calculate_textplex(fairy$text, udpipe_model)
+### This is the preferred way to do parallelization. It doesn't use up all your RAM!
 
-fit <- fit_two_factor_model(fairy_rawscore)
+## sotu_rawscore <- furrr::future_map_dfr(sotu_text, calculate_textplex, .progress = TRUE)
 
-fairy$syntactic_complexity <- fit$scores[,1]
-fairy$semantic_complexity <- fit$scores[,2]
+data(sotu_rawscore)
+fit <- fit_two_factor_model(sotu_rawscore)
 
-fairy %>% arrange(desc(syntactic_complexity)) %>% select(book, syntactic_complexity)
+sotu_meta$syntactic_complexity <- fit$scores[,1]
+sotu_meta$semantic_complexity <- fit$scores[,2]
+sotu_meta$text <- sotu_text
+
+sotu_meta %>% arrange(desc(syntactic_complexity)) %>% select(president, year, syntactic_complexity, text)
+```
+
+How to write a syntactically complex SOTU, President Madison?
+
+```{r}
+sotu_meta %>% arrange(desc(syntactic_complexity)) %>%
+    select(president, year, syntactic_complexity, text) %>%
+    slice(1) %>% pull(text) %>% print
 ```
 

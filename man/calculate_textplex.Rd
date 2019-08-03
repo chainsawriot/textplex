@@ -4,17 +4,22 @@
 \alias{calculate_textplex}
 \title{Calculate the raw scores}
 \usage{
-calculate_textplex(input_text, udpipe_model, mtld_threshold = 0.72,
-  mtld_min_ntoken = 10)
+calculate_textplex(input_text, mtld_threshold = 0.72,
+  mtld_min_ntoken = 10, parallel = TRUE, .progress = TRUE,
+  plan = "multiprocess")
 }
 \arguments{
 \item{input_text}{vector of characters.}
 
-\item{udpipe_model}{udpipe_model loaded with udpipe::udpipe_load_model().}
-
 \item{mtld_threshold}{Threshold for the calculation of MTLD score.}
 
 \item{mtld_min_ntoken}{Threhold for minimal length of a viable sentence.}
+
+\item{parallel}{logical, whether or not to use parallel computation.}
+
+\item{plan}{character, please refer to ?future::plan for other options.}
+
+\item{.progrss_bar}{logical, whether or not to display progress bar. Only possible when parallel = TRUE.}
 }
 \value{
 tibble of raw scores
@@ -24,9 +29,9 @@ This function takes a vector of characters and calculate the raw scores required
 }
 \examples{
 \dontrun{
-require(udpipe)
+require(spacyr)
 data(fairy)
-udpipe_model <- udpipe_load_model('english-ewt-ud-2.4-190531.udpipe')
-fairy_rawscore <- calculate_textplex(fairy$text, udpipe_model)
+spacy_initialize(model = 'en')
+fairy_rawscore <- calculate_textplex(fairy$text)
 }
 }
