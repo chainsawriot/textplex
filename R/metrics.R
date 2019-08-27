@@ -146,6 +146,7 @@ cal_mtld <- function(input_text, mtld_threshold = 0.72, mtld_min_ntoken = 10) {
 #' This function takes a vector of characters and calculate the raw scores required for the algorithm.
 #' @importFrom magrittr %>%
 #' @param input_text vector of characters.
+#' @param parsed_text a list of dataframes. Must be parsed with spacyr::spacy_parse(pos = TRUE, dependency = TRUE, tag = TRUE)
 #' @param mtld_threshold Threshold for the calculation of MTLD score.
 #' @param mtld_min_ntoken Threhold for minimal length of a viable sentence.
 #' @param parallel logical, whether or not to use parallel computation.
@@ -160,8 +161,10 @@ cal_mtld <- function(input_text, mtld_threshold = 0.72, mtld_min_ntoken = 10) {
 #' fairy_rawscore <- calculate_textplex(fairy$text)
 #' }
 #' @export
-calculate_textplex <- function(input_text, mtld_threshold = 0.72, mtld_min_ntoken = 10, parallel = TRUE, .progress = TRUE, plan = 'multiprocess') {
-    parsed_entire_content <- spacyr::spacy_parse(input_text, pos = TRUE, dependency = TRUE, tag = TRUE, multi_thread = parallel) %>% dplyr::group_by(doc_id) %>% dplyr::group_nest() %>% dplyr::pull(data)
+calculate_textplex <- function(input_text, parsed_text = NULL, mtld_threshold = 0.72, mtld_min_ntoken = 10, parallel = TRUE, .progress = TRUE, plan = 'multiprocess') {
+    if (is.null(parsed_text)) {
+        parsed_text <- spacyr::spacy_parse(input_text, pos = TRUE, dependency = TRUE, tag = TRUE, multi_thread = parallel) %>% dplyr::group_by(doc_id) %>% dplyr::group_nest() %>% dplyr::pull(data)
+    }
     tokenized_text <- quanteda::tokens(input_text)
     lexdiv_res <- quanteda::textstat_lexdiv(tokenized_text, measure = c("TTR"))
     ari_res <- quanteda::textstat_readability(quanteda::corpus(input_text), measure = "ARI")
@@ -169,7 +172,7 @@ calculate_textplex <- function(input_text, mtld_threshold = 0.72, mtld_min_ntoke
     input_dfm <- quanteda::dfm(tokenized_text)
     I <- .cal_yule_i(input_dfm)
     entropy <- quanteda::textstat_entropy(input_dfm) / log(quanteda::ntoken(input_dfm), 2) * 100
-    lexdiv_res %>% dplyr::left_join(ari_res, by = 'document') %>% dplyr::mutate(I = I, avg_sl = cal_avg_sentence_length(input_text), entropy = entropy, mtld = cal_mtld(input_text, mtld_threshold = mtld_threshold, mtld_min_ntoken = mtld_min_ntoken)) %>% dplyr::bind_cols(cal_mean_dist_root(parsed_entire_content, parallel = parallel, .progress = .progress, plan = plan))
+    lexdiv_res %>% dplyr::left_join(ari_res, by = 'document') %>% dplyr::mutate(I = I, avg_sl = cal_avg_sentence_length(input_text), entropy = entropy, mtld = cal_mtld(input_text, mtld_threshold = mtld_threshold, mtld_min_ntoken = mtld_min_ntoken)) %>% dplyr::bind_cols(cal_mean_dist_root(parsed_text, parallel = parallel, .progress = .progress, plan = plan))
 }
 
 #' Fit a two-factor model as per Tolochko and Boomgaarden

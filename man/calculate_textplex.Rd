@@ -4,12 +4,14 @@
 \alias{calculate_textplex}
 \title{Calculate the raw scores}
 \usage{
-calculate_textplex(input_text, mtld_threshold = 0.72,
-  mtld_min_ntoken = 10, parallel = TRUE, .progress = TRUE,
-  plan = "multiprocess")
+calculate_textplex(input_text, parsed_text = NULL,
+  mtld_threshold = 0.72, mtld_min_ntoken = 10, parallel = TRUE,
+  .progress = TRUE, plan = "multiprocess")
 }
 \arguments{
 \item{input_text}{vector of characters.}
+
+\item{parsed_text}{a list of dataframes. Must be parsed with spacyr::spacy_parse(pos = TRUE, dependency = TRUE, tag = TRUE)}
 
 \item{mtld_threshold}{Threshold for the calculation of MTLD score.}
 
