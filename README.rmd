@@ -8,7 +8,7 @@ The goal of textplex is to calculate textual complexity using the algorithm by T
 **Caveats:**
 
 1. The current version uses [spacyr](https://github.com/quanteda/spacyr) (Benoit et al.) to maintain compatibility with the original implementation (unlike the initial implement, which used udpipe). Future versions will add back the option to use udpipe.
-2. Super slow (although has been improved), but premature optimization is the root of all evil.
+2. Super slow (although has been improved), but premature optimization is the root of all evil. See [benchmark](#benchmark).
 3. For the algorithm by Benoit, Munger & Spirling (2019), use [sophistication](https://github.com/kbenoit/sophistication).
 
 References:
@@ -114,3 +114,17 @@ sotu_meta %>% arrange(desc(syntactic_complexity)) %>%
     slice(1) %>% pull(text) %>% print
 ```
 
+# Benchmark
+
+We use this code as the benchmark on a Early 2015 Macbook Air
+
+```{r, eval = FALSE}
+start_time <- Sys.time()
+sotu_rawscore <- furrr::future_map_dfr(sotu_text, calculate_textplex, .progress = TRUE)
+end_time <- Sys.time()
+print(end_time - start_time)
+```
+
+```{r, results="asis", echo = FALSE}
+knitr::kable(data.frame(version = c("0.0.1"), "time (min)" = c(12.12)))
+```

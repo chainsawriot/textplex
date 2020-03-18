@@ -84,25 +84,6 @@ cal_mean_dist_root <- function(parsed_entire_content, parallel, .progress, plan 
     }
 }
 
-### steal from https://github.com/chainsawriot/quanteda/blob/yule_i/R/textstat_lexdiv.R
-### hopefully the PR is accepted.
-
-.cal_yule_i <- function(x) {
-    ViN <- lapply(quanteda::docnames(x), function(y) {
-        result <- as.data.frame(table(Matrix::colSums(x[y, ])), stringsAsFactors = FALSE)
-        names(result) <- c("i", "ViN")
-        result[["i"]] <- as.integer(result[["i"]])
-        result[["n_tokens"]] <- quanteda::ntoken(x)[y]
-        result[["n_types"]] <- quanteda::ntype(x)[y]
-        subset(result, result$i > 0)
-    })
-    M_1 <- quanteda::ntype(x)
-    M_2 <- vapply(ViN, function(y) sum(y$ViN * y$i^2), numeric(1))
-    yule_i <- (M_1 ^ 2) / (M_2 - M_1)
-    yule_i[yule_i == Inf] <- 0
-    return(yule_i)
-}
-
 .cal_mtld_raw <- function(input_text, mtld_threshold = 0.72, mtld_min_ntoken = 10, backward = FALSE) {
     current_ntoken <- 0
     current_ttr <- 0
@@ -154,7 +135,7 @@ cal_mtld <- function(input_text, mtld_threshold = 0.72, mtld_min_ntoken = 10) {
 #' @param plan character, please refer to ?future::plan for other options.
 #' @return tibble of raw scores
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' require(spacyr)
 #' data(fairy)
 #' spacy_initialize(model = 'en')
@@ -168,10 +149,10 @@ calculate_textplex <- function(input_text, parsed_text = NULL, mtld_threshold = 
     tokenized_text <- quanteda::tokens(input_text)
     lexdiv_res <- quanteda::textstat_lexdiv(tokenized_text, measure = c("TTR"))
     ari_res <- quanteda::textstat_readability(quanteda::corpus(input_text), measure = "ARI")
-    ## NB: the current implementation of quanteda::textstat_entropy does not adjust for ntokens as in T&B.
     input_dfm <- quanteda::dfm(tokenized_text)
-    I <- .cal_yule_i(input_dfm)
-    entropy <- quanteda::textstat_entropy(input_dfm) / log(quanteda::ntoken(input_dfm), 2) * 100
+    I <- quanteda::textstat_lexdiv(tokenized_text, measure = c("I"))$I
+    ## NB: the current implementation of quanteda::textstat_entropy does not adjust for ntokens as in T&B. We need to do it ourselves
+    entropy <- quanteda::textstat_entropy(input_dfm)$entropy / log(quanteda::ntoken(input_dfm), 2) * 100
     lexdiv_res %>% dplyr::left_join(ari_res, by = 'document') %>% dplyr::mutate(I = I, avg_sl = cal_avg_sentence_length(input_text), entropy = entropy, mtld = cal_mtld(input_text, mtld_threshold = mtld_threshold, mtld_min_ntoken = mtld_min_ntoken)) %>% dplyr::bind_cols(cal_mean_dist_root(parsed_text, parallel = parallel, .progress = .progress, plan = plan))
 }
 
@@ -198,7 +179,7 @@ fit_two_factor_model <- function(raw_scores, rotate = "oblimin") {
 #' @usage data(fairy)
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(fairy)
 #' fairy_rawscore <- calculate_textplex(fairy$text)
 #' }

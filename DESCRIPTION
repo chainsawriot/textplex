@@ -1,21 +1,23 @@
 Package: textplex
 Title: Calculate Text Complexity
-Version: 0.0.0.3
+Version: 0.0.1
 Authors@R: 
     person(given = "Chung-hong",
            family = "Chan",
            role = c("aut", "cre"),
            email = "chainsawtiney@gmail.com",
            comment = c(ORCID = "0000-0002-6232-7530"))
-Description: Calculate textual complexity using the algorithm by Tolochko & Boomgaarden (2019).
+Description: Calculate textual complexity using the algorithm by Tolochko & Boomgaarden (2019) <https://ijoc.org/index.php/ijoc/article/view/9952/2625>.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends:
+    R (>= 3.5)
 Imports: 
     purrr,
     furrr,
     spacyr,
-    quanteda,
+    quanteda (>= 2.0),
     Matrix,
     dplyr,
     stringr,
@@ -24,4 +26,4 @@ Imports:
     magrittr,
     psych,
     GPArotation
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2

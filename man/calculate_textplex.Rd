@@ -4,9 +4,15 @@
 \alias{calculate_textplex}
 \title{Calculate the raw scores}
 \usage{
-calculate_textplex(input_text, parsed_text = NULL,
-  mtld_threshold = 0.72, mtld_min_ntoken = 10, parallel = TRUE,
-  .progress = TRUE, plan = "multiprocess")
+calculate_textplex(
+  input_text,
+  parsed_text = NULL,
+  mtld_threshold = 0.72,
+  mtld_min_ntoken = 10,
+  parallel = TRUE,
+  .progress = TRUE,
+  plan = "multiprocess"
+)
 }
 \arguments{
 \item{input_text}{vector of characters.}
@@ -30,7 +36,7 @@ tibble of raw scores
 This function takes a vector of characters and calculate the raw scores required for the algorithm.
 }
 \examples{
-\dontrun{
+\donttest{
 require(spacyr)
 data(fairy)
 spacy_initialize(model = 'en')

@@ -12,7 +12,7 @@ data(fairy)
 First fifty fairy tales from hcandersenr::hcandersen_en.
 }
 \examples{
-\dontrun{
+\donttest{
 data(fairy)
 fairy_rawscore <- calculate_textplex(fairy$text)
 }
